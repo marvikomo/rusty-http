@@ -1,3 +1,4 @@
+use std::net::TcpListener;
 pub struct Server {
     addr: String,
 }
@@ -8,5 +9,6 @@ impl Server {
     }
     pub fn run(self) {
         println!("listening on {}", self.addr);
+        let listener = TcpListener::bind(&self.addr);
     }
 }
