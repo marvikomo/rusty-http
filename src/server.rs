@@ -1,5 +1,8 @@
 use std::net::TcpListener;
 use std::io::Read;
+use crate::http::Request;
+use std::convert::TryFrom;
+
 pub struct Server {
     addr: String,
 }
@@ -18,8 +21,13 @@ impl Server {
                     match stream.read(&mut buffer){
                         Ok(_) =>{
                             println!("Received a request:{}", String::from_utf8_lossy(&buffer));
+                            //Request::try_from(&buffer as &[u8]); //we need to convert the buffer array to bytes slice
+                            match Request::try_from(&buffer[..]) {// another way to do this
+                                Ok(request) => {}
+                                Err(e) => println!("Failed to read connection: {}", e)
+                            }
                         }
-                        Err(e) => println!("Failed to read connection: {}", e)
+                        Err(e) => println!("Failed to parse a request: {}", e)
                     }
                 }
                 Err(e) => println!("Failed to establish a connection: {}", e)
