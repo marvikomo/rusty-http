@@ -23,7 +23,9 @@ impl Server {
                             println!("Received a request:{}", String::from_utf8_lossy(&buffer));
                             //Request::try_from(&buffer as &[u8]); //we need to convert the buffer array to bytes slice
                             match Request::try_from(&buffer[..]) {// another way to do this
-                                Ok(request) => {}
+                                Ok(request) => {
+                                    println!("Received a request {}", request )
+                                }
                                 Err(e) => println!("Failed to read connection: {}", e)
                             }
                         }
