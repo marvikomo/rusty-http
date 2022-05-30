@@ -4,7 +4,7 @@ use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::str;
 use std::str::Utf8Error;
 
-use super::method::Method;
+use super::method::{Method, MethodError};
 pub struct Request {
     path: String,
     query_string: Option<String>,
@@ -43,6 +43,7 @@ impl TryFrom<&[u8]> for Request {
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
         }
+        let method: Method = "hey".parse()?;
         unimplemented!()
     }
 }
@@ -82,6 +83,12 @@ impl ParseError {
             Self::InvalidProtocol => "Invalid Protocol",
             Self::InvalidMethod => "Invalid Method",
         }
+    }
+}
+
+impl From<MethodError> for ParseError {
+    fn from(_: MethodError) -> Self {
+        Self::InvalidMethod
     }
 }
 
