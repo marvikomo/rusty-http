@@ -37,14 +37,19 @@ impl TryFrom<&[u8]> for Request {
                                             // }
 
         let (method, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?; //converts option to result
+        let (path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
+        let (protocol, _) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
 
+        if protocol != "HTTP/1.1" {
+            return Err(ParseError::InvalidProtocol);
+        }
         unimplemented!()
     }
 }
 
 fn get_next_word(request: &str) -> Option<(&str, &str)> {
     for (i, val) in request.chars().enumerate() {
-        if val == ' ' {
+        if val == ' ' || val == '\r' {
             return Some((&request[..i], &request[i + 1..]));
         }
     }
