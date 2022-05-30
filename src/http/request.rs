@@ -37,13 +37,25 @@ impl TryFrom<&[u8]> for Request {
                                             // }
 
         let (method, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?; //converts option to result
-        let (path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
+        let (mut path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
         let (protocol, _) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
 
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
         }
         let method: Method = "hey".parse()?;
+        let mut query_string = None;
+        // match path.find('?'){
+        //     Some(i)=>{
+        //         query_string = Some(&path[i + 1..]);
+        //         path = &path[..i]
+        //     }
+        //     None => {}
+        // }
+        if let Some(i) = path.find('?'){  //used if let instead of match
+            query_string = Some(&path[i + 1..]);
+            path = &path[..i];
+        }
         unimplemented!()
     }
 }
