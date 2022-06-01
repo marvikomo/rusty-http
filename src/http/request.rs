@@ -5,23 +5,23 @@ use std::str;
 use std::str::Utf8Error;
 
 use super::method::{Method, MethodError};
-pub struct Request {
-    path: String,
-    query_string: Option<String>,
+pub struct Request<'buf> {
+    path: &'buf str,
+    query_string: Option<&'buf str>,
     method: Method,
 }
 
-impl Request {
-    fn from_bytes_array(buf: &[u8]) -> Result<Self, String> {
-        unimplemented!()
-    }
-}
+// impl Request<'buf> {
+//     fn from_bytes_array(buf: &'buf [u8]) -> Result<Self, String> {
+//         unimplemented!()
+//     }
+// }
 
-impl TryFrom<&[u8]> for Request {
+impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
     type Error = ParseError;
 
     //GET /search?name=marv&sort=1 HTTP/1.1
-    fn try_from(buf: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(buf: &'buf [u8]) -> Result<Request<'buf>, Self::Error> {
         // match str::from_utf8(buf){
         //     Ok(request) => {},
         //     Err(_) => return Err(ParseError::InvalidEncoding)
@@ -56,7 +56,11 @@ impl TryFrom<&[u8]> for Request {
             query_string = Some(&path[i + 1..]);
             path = &path[..i];
         }
-        unimplemented!()
+       Ok(Self {
+           path: path,
+           query_string,
+           method
+       })
     }
 }
 
@@ -90,7 +94,7 @@ impl Debug for ParseError {
 impl ParseError {
     fn message(&self) -> &str {
         match self {
-            Self::InvalidProtocol => "Invalid Request",
+            Self::InvalidRequest => "Invalid Request",
             Self::InvalidEncoding => "Invalid Encoding",
             Self::InvalidProtocol => "Invalid Protocol",
             Self::InvalidMethod => "Invalid Method",

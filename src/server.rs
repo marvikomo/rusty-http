@@ -24,12 +24,13 @@ impl Server {
                             //Request::try_from(&buffer as &[u8]); //we need to convert the buffer array to bytes slice
                             match Request::try_from(&buffer[..]) {// another way to do this
                                 Ok(request) => {
-                                    println!("Received a request {}", request )
+                                    //println!("Received a request {}" )
                                 }
-                                Err(e) => println!("Failed to read connection: {}", e)
+                                Err(e) => println!("Failed to parse a request: {}", e)
+
                             }
                         }
-                        Err(e) => println!("Failed to parse a request: {}", e)
+                        Err(e) => println!("Failed to read connection: {}", e)
                     }
                 }
                 Err(e) => println!("Failed to establish a connection: {}", e)
