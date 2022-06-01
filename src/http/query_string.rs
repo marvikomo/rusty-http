@@ -1,5 +1,5 @@
 use std::collections::HashMap;
 
-pub struct QueryStringP{
-    
+pub struct QueryString{
+    data: HashMap<&str,&str>
 }
