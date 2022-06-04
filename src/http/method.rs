@@ -1,4 +1,6 @@
 use std::str::FromStr;
+use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
+#[derive(Debug)]
 pub enum Method {
     GET,
     DELETE,
@@ -29,4 +31,5 @@ impl FromStr for Method{
         }        
     }
 }
+
 pub struct MethodError;

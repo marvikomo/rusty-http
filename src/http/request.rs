@@ -6,9 +6,11 @@ use std::str::Utf8Error;
 
 use super::method::{Method, MethodError};
 use super::{QueryString, QueryStringValue};
+
+#[derive(Debug)]
 pub struct Request<'buf> {
     path: &'buf str,
-    query_string: Option<&'buf str>,
+    query_string: Option<QueryString<'buf>>,
     method: Method,
 }
 
@@ -44,7 +46,8 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
         }
-        let method: Method = "hey".parse()?;
+        let method: Method = method.parse()?;
+        println!("Method received {:?}",&method);
         let mut query_string = None;
         // match path.find('?'){
         //     Some(i)=>{
@@ -54,7 +57,7 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         //     None => {}
         // }
         if let Some(i) = path.find('?'){  //used if let instead of match
-            query_string = Some(&path[i + 1..]);
+            query_string = Some(QueryString::from(&path[i + 1..]));
             path = &path[..i];
         }
        Ok(Self {
