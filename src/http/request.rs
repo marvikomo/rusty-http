@@ -46,7 +46,7 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
         }
-        let method: Method = method.parse()?;
+        let method = method.parse()?;
         println!("Method received {:?}",&method);
         let mut query_string = None;
         // match path.find('?'){
@@ -74,7 +74,7 @@ fn get_next_word(request: &str) -> Option<(&str, &str)> {
             return Some((&request[..i], &request[i + 1..]));
         }
     }
-    unimplemented!()
+    None
 }
 
 pub enum ParseError {
