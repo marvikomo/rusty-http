@@ -46,7 +46,7 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
         }
-        let method = method.parse()?;
+        let method: Method = method.parse()?;
         println!("Method received {:?}",&method);
         let mut query_string = None;
         // match path.find('?'){
