@@ -22,15 +22,21 @@ impl Server {
                         Ok(_) =>{
                             println!("Received a request:{}", String::from_utf8_lossy(&buffer));
                             //Request::try_from(&buffer as &[u8]); //we need to convert the buffer array to bytes slice
-                            match Request::try_from(&buffer[..]) {// another way to do this
+                            let response = match Request::try_from(&buffer[..]) {// another way to do this
                                 Ok(request) => {
                                     //println!("Received a request {}" )
                                     dbg!(request);
-                                    let response = Response::new(StatusCode::Ok, Some("<h1>It works!!</h1>".to_string()));
-                                    response.send(&mut stream);
+                                     Response::new(StatusCode::Ok, Some("<h1>It works!!</h1>".to_string()))
+                                   
                                 }
-                                Err(e) => println!("Failed to parse a request: {}", e)
+                                Err(e) => {
+                                    println!("Failed to parse a request: {}", e);
+                                    Response::new(StatusCode::BadRequest, None)
+                                 }
+                            };
 
+                            if let Err(e) = response.send(&mut stream){
+                                println!("Failed to send response: {}", e);
                             }
                         }
                         Err(e) => println!("Failed to read connection: {}", e)
