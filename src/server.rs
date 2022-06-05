@@ -27,7 +27,7 @@ impl Server {
                                     //println!("Received a request {}" )
                                     dbg!(request);
                                     let response = Response::new(StatusCode::Ok, Some("<h1>It works!!</h1>".to_string()));
-                                    write!(stream, "{}", response);
+                                    response.send(&mut stream);
                                 }
                                 Err(e) => println!("Failed to parse a request: {}", e)
 
