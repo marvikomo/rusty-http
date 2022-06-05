@@ -1,6 +1,6 @@
 use std::net::TcpListener;
 use std::io::{Read, Write};
-use crate::http::Request;
+use crate::http::{Request,Response, StatusCode};
 use std::convert::TryFrom;
 
 pub struct Server {
@@ -26,7 +26,8 @@ impl Server {
                                 Ok(request) => {
                                     //println!("Received a request {}" )
                                     dbg!(request);
-                                    write!(stream, "HTTP/1.0 404 Not Found\r\n\r\n");
+                                    let response = Response::new(StatusCode::Ok, Some("<h1>It works!!</h1>".to_string()));
+                                    write!(stream, "{}", response);
                                 }
                                 Err(e) => println!("Failed to parse a request: {}", e)
 
