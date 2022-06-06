@@ -1,7 +1,17 @@
 use std::net::TcpListener;
 use std::io::{Read, Write};
-use crate::http::{Request,Response, StatusCode};
+use crate::http::{Request,Response, StatusCode, ParseError};
 use std::convert::TryFrom;
+
+pub trait Handler {
+    fn handle_request(&mut self, request: &Request) -> Response;
+     
+    //this is like a default implementation and can be overiden 
+    fn handle_bad_request(&mut self, e: &ParseError) -> Response {
+        println!("Failed to parse request: {}", e);
+        Response::new(StatusCode::BadRequest, None)
+    }
+}
 
 pub struct Server {
     addr: String,
@@ -11,7 +21,7 @@ impl Server {
     pub fn new(addr: String) -> Self {
         Self { addr }
     }
-    pub fn run(self) {
+    pub fn run(self, mut handler: impl Handler) {
         println!("listening on {}", self.addr);
         let listener = TcpListener::bind(&self.addr).unwrap();
         loop{
@@ -25,13 +35,15 @@ impl Server {
                             let response = match Request::try_from(&buffer[..]) {// another way to do this
                                 Ok(request) => {
                                     //println!("Received a request {}" )
-                                    dbg!(request);
-                                     Response::new(StatusCode::Ok, Some("<h1>It works!!</h1>".to_string()))
+                                    // dbg!(request);
+                                    //  Response::new(StatusCode::Ok, Some("<h1>It works!!</h1>".to_string()))
+                                    handler.handle_request(&request)
                                    
                                 }
                                 Err(e) => {
-                                    println!("Failed to parse a request: {}", e);
-                                    Response::new(StatusCode::BadRequest, None)
+                                    // println!("Failed to parse a request: {}", e);
+                                    // Response::new(StatusCode::BadRequest, None)
+                                    handler.handle_bad_request(&e)
                                  }
                             };
 
