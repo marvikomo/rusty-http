@@ -2,7 +2,7 @@
 
 A **promising** and **correct** HTTP implementation for Rust.
 
-> **Note**: rusty-http's [master](https://github.com/marvikomo/rust_http_server) branch is
+> **Note**: rusty-http's [master](https://github.com/marvikomo/rusty-http) branch is
 > currently preparing breaking changes. For the most recently *released* code,
 
 - HTTP/1 and HTTP/2
